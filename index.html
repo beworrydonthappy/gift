@@ -264,6 +264,21 @@
       <div class="result-name" id="result-name">—</div>
       <button class="share-btn" id="share-btn">언니에게 전달하기</button>
       <button class="restart-btn" onclick="restart()">처음부터 다시</button>
+      <button class="restart-btn" style="margin-top:8px; color:var(--muted);" onclick="goToSecret()">???</button>
+    </div>
+  </div>
+
+  <!-- 이스터에그 -->
+  <div class="screen" id="screen-secret">
+    <div style="padding: 1rem 0 3rem; text-align:center;">
+      <div style="font-size:11px; letter-spacing:0.14em; color:var(--muted); text-transform:uppercase; margin-bottom:1.5rem;">🤫</div>
+      <div id="secret-img-wrap" style="width:100%; border-radius:14px; overflow:hidden; margin-bottom:1.25rem; border:1px solid var(--line); cursor:pointer;" onclick="nextPhoto()">
+        <img id="secret-img" src="1.jpg" style="width:100%; height:auto; display:block;" />
+      </div>
+      <div style="font-size:13px; color:var(--muted); margin-bottom:1.5rem;">
+        <span id="photo-index">1</span> / 37 &nbsp;·&nbsp; 사진 눌러서 넘기기 👆
+      </div>
+      <button class="restart-btn" onclick="exitSecret()">← 돌아가기</button>
     </div>
   </div>
 
@@ -434,6 +449,36 @@
         navigator.clipboard.writeText(text).then(() => alert('클립보드에 복사됐어!'));
       }
     };
+  }
+
+  const bgm2 = new Audio('bgm2.mp3');
+  bgm2.loop = true;
+  bgm2.volume = 0.4;
+
+  let currentPhoto = 1;
+  const totalPhotos = 37;
+
+  function goToSecret() {
+    bgm.pause();
+    bgm2.currentTime = 0;
+    bgm2.play().catch(() => {});
+    currentPhoto = 1;
+    document.getElementById('secret-img').src = '1.jpg';
+    document.getElementById('photo-index').textContent = '1';
+    goTo('secret');
+  }
+
+  function nextPhoto() {
+    currentPhoto++;
+    if (currentPhoto > totalPhotos) currentPhoto = 1;
+    document.getElementById('secret-img').src = currentPhoto + '.jpg';
+    document.getElementById('photo-index').textContent = currentPhoto;
+  }
+
+  function exitSecret() {
+    bgm2.pause();
+    bgm.play().catch(() => {});
+    goTo('result');
   }
 
   function confirmStart() {

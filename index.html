@@ -226,7 +226,7 @@
           <span style="font-size:14px; color:var(--accent-soft); line-height:1.6;">최후의 1개가 설아의 의자가 될 거야 🐱</span>
         </div>
       </div>
-      <button class="btn-start" onclick="playRandomCat(); startGame()">게임 시작하기</button>
+      <button class="btn-start" onclick="playRandomCat(); confirmStart()">놀아 시작?</button>
       <p style="margin-top: 14px; font-size: 13px; color: var(--muted);">📢📢📢 꼭 소리를 켜줘!</p>
     </div>
   </div>
@@ -270,13 +270,21 @@
 </div>
 <script>
   // =============================================
-  // 소리 파일 — GitHub에 올린 wav 파일 이름이에요
+  // 소리 파일
   // =============================================
+  const bgm = new Audio('bgm.mp3');
+  bgm.loop = true;
+  bgm.volume = 0.4;
+
   const catSounds = [
     new Audio('cat1.wav'),
     new Audio('cat2.wav'),
   ];
   const fanfareSound = new Audio('fanfare.wav');
+
+  function startBgm() {
+    bgm.play().catch(() => {});
+  }
 
   function playRandomCat() {
     const s = catSounds[Math.floor(Math.random() * catSounds.length)];
@@ -428,6 +436,17 @@
     };
   }
 
+  function confirmStart() {
+    const overlay = document.getElementById('popup-overlay');
+    overlay.style.display = 'flex';
+  }
+
+  function closePopupAndStart() {
+    document.getElementById('popup-overlay').style.display = 'none';
+    startBgm();
+    startGame();
+  }
+
   function goTo(screenName) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-' + screenName).classList.add('active');
@@ -437,5 +456,15 @@
     goTo('intro');
   }
 </script>
+  <!-- 팝업 -->
+  <div id="popup-overlay" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.4); z-index:100; align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:18px; padding:2rem 1.5rem; max-width:300px; width:90%; text-align:center; margin:0 auto;">
+      <div style="font-size:2rem; margin-bottom:1rem;">🐾</div>
+      <div style="font-size:16px; font-weight:500; color:#222; margin-bottom:0.5rem;">잠깐!</div>
+      <div style="font-size:14px; color:#777; line-height:1.7; margin-bottom:1.5rem;">진짜 신중하게 선택해야 해!<br>나중에 후회하면 안 돼 😤</div>
+      <button onclick="closePopupAndStart()" style="width:100%; padding:12px; border-radius:10px; border:none; background:#222; color:#fff; font-size:14px; font-family:'Noto Sans KR',sans-serif; cursor:pointer;">알겠어 🐱</button>
+    </div>
+  </div>
+
 </body>
 </html>

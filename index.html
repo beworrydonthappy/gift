@@ -274,11 +274,8 @@
   <div class="screen" id="screen-secret">
     <div style="padding: 1rem 0 3rem; text-align:center;">
       <div style="font-size:11px; letter-spacing:0.14em; color:var(--muted); text-transform:uppercase; margin-bottom:1.5rem;">🤫</div>
-      <div id="secret-img-wrap" style="width:100%; border-radius:14px; overflow:hidden; margin-bottom:1.25rem; border:1px solid var(--line); cursor:pointer;" onclick="nextPhoto()">
+      <div id="secret-img-wrap" style="width:100%; border-radius:14px; overflow:hidden; margin-bottom:1.5rem; border:1px solid var(--line); cursor:pointer; display:flex; align-items:center; justify-content:center; background:#f8f8f6;" onclick="nextPhoto()">
         <img id="secret-img" src="1.jpg" style="width:100%; height:auto; display:block;" />
-      </div>
-      <div style="font-size:13px; color:var(--muted); margin-bottom:1.5rem;">
-        <span id="photo-index">1</span> / 37 &nbsp;·&nbsp; 사진 눌러서 넘기기 👆
       </div>
       <button class="restart-btn" onclick="exitSecret()">← 돌아가기</button>
     </div>
@@ -453,7 +450,7 @@
     };
   }
 
-  const bgm2 = new Audio('bgm2.mp3');
+  const bgm2 = new Audio('bgm2.mp4');
   bgm2.loop = true;
   bgm2.volume = 0.4;
 
@@ -474,7 +471,6 @@
     currentPhoto++;
     if (currentPhoto > totalPhotos) currentPhoto = 1;
     document.getElementById('secret-img').src = currentPhoto + '.jpg';
-    document.getElementById('photo-index').textContent = currentPhoto;
   }
 
   function exitSecret() {

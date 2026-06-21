@@ -141,9 +141,9 @@
       padding: 16px 18px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
     }
-    .chair-name { font-size: 16px; font-weight: 500; color: var(--accent); }
+    .chair-name { font-size: 16px; font-weight: 500; color: var(--accent); text-align: center; }
     .chair-check {
       width: 22px; height: 22px;
       border-radius: 50%;
@@ -207,8 +207,27 @@
     <div class="intro">
       <div class="intro-label">Happy 200 days</div>
       <h1><strong>설아</strong>는 고양이</h1>
-      <p>버튼을 눌러주세요</p>
-      <button class="btn-start" onclick="playRandomCat(); startGame()">냠냠이</button>
+      <p>버튼 눌러 고양이 🐾</p>
+      <button class="btn-start" onclick="playRandomCat(); goTo('explain')">냠냠이</button>
+    </div>
+  </div>
+
+  <!-- 설명 -->
+  <div class="screen" id="screen-explain">
+    <div class="intro">
+      <div class="intro-label">게임 방법</div>
+      <h1>이렇게 하면 돼 🪑</h1>
+      <div style="background: rgba(255,255,255,0.6); border-radius: 14px; padding: 1.5rem; margin-bottom: 2rem; text-align:center;">
+        <div style="display:flex; flex-direction:column; gap:10px; align-items:center;">
+          <span style="font-size:14px; color:var(--accent-soft); line-height:1.6;">16개의 의자 중 더 마음에 드는 걸 골라봐</span>
+          <span style="font-size:16px; color:var(--muted);">↓</span>
+          <span style="font-size:14px; color:var(--accent-soft); line-height:1.6;">결승까지 계속 꾹꾹이...🐾</span>
+          <span style="font-size:16px; color:var(--muted);">↓</span>
+          <span style="font-size:14px; color:var(--accent-soft); line-height:1.6;">최후의 1개가 설아의 의자가 될 거야 🐱</span>
+        </div>
+      </div>
+      <button class="btn-start" onclick="playRandomCat(); startGame()">게임 시작하기</button>
+      <p style="margin-top: 14px; font-size: 13px; color: var(--muted);">📢📢📢 꼭 소리를 켜줘!</p>
     </div>
   </div>
 
@@ -222,7 +241,6 @@
           <div id="img-a" class="chair-img-placeholder">🪑</div>
           <div class="chair-info">
             <span class="chair-name" id="name-a"></span>
-            <span class="chair-check" id="check-a">✓</span>
           </div>
         </div>
         <div class="vs-divider">VS</div>
@@ -230,7 +248,6 @@
           <div id="img-b" class="chair-img-placeholder">🪑</div>
           <div class="chair-info">
             <span class="chair-name" id="name-b"></span>
-            <span class="chair-check" id="check-b">✓</span>
           </div>
         </div>
       </div>
@@ -334,8 +351,6 @@
 
     document.getElementById('card-a').classList.remove('selected');
     document.getElementById('card-b').classList.remove('selected');
-    document.getElementById('check-a').style.color = 'transparent';
-    document.getElementById('check-b').style.color = 'transparent';
     document.getElementById('btn-next-match').disabled = true;
     selectedSide = null;
   }
@@ -368,8 +383,6 @@
     selectedSide = side;
     document.getElementById('card-a').classList.toggle('selected', side === 'a');
     document.getElementById('card-b').classList.toggle('selected', side === 'b');
-    document.getElementById('check-a').style.color = side === 'a' ? '#fff' : 'transparent';
-    document.getElementById('check-b').style.color = side === 'b' ? '#fff' : 'transparent';
     document.getElementById('btn-next-match').disabled = false;
   }
 

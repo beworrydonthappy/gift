@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>설아의 좌식의자 월드컵</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f8f8f6;
+      --surface: #ffffff;
+      --accent: #222222;
+      --accent-soft: #555555;
+      --line: #e8e8e4;
+      --muted: #aaaaaa;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      min-height: 500px;
+    }
+
+    .screen {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+      position: relative;
+    }
+
+    /* Intro */
+    .intro {
+      text-align: center;
+      padding: 3.5rem 0;
+    }
+    .intro-label {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+    .intro h1 {
+      font-size: 26px;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+    }
+    .intro h1 strong { font-weight: 500; }
+    .intro p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 2.5rem;
+      line-height: 1.7;
+    }
+    .btn-start {
+      padding: 13px 40px;
+      border-radius: 10px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      font-size: 15px;
+      font-family: 'Noto Sans KR', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-start:hover { opacity: 0.8; }
+
+    /* Tournament */
+    .tournament-screen { padding: 1rem 0 2rem; }
+    .round-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .match-label {
+      font-size: 13px;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .versus {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .chair-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+      user-select: none;
+    }
+    .chair-card:hover { border-color: var(--accent-soft); transform: translateY(-1px); }
+    .chair-card.selected { border-color: var(--accent); border-width: 2px; }
+    .chair-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+    .chair-img-placeholder {
+      width: 100%;
+      height: 200px;
+      background: #f0f0ee;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .chair-info {
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .chair-name { font-size: 16px; font-weight: 500; color: var(--accent); }
+    .chair-check {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      color: transparent;
+      transition: all 0.2s;
+    }
+    .chair-card.selected .chair-check { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .vs-divider { text-align: center; font-size: 12px; color: var(--muted); letter-spacing: 0.1em; }
+    .btn-next-match {
+      margin-top: 1.5rem;
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px;
+      font-family: 'Noto Sans KR', sans-serif;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn-next-match:disabled { background: var(--line); border-color: var(--line); color: var(--muted); cursor: default; }
+
+    /* Result */
+    .result-screen { padding: 2rem 0; text-align: center; }
+    .result-eyebrow { font-size: 11px; letter-spacing: 0.14em; color: var(--muted); text-transform: uppercase; margin-bottom: 1.25rem; }
+    .result-title { font-size: 22px; font-weight: 300; color: var(--accent); margin-bottom: 2rem; line-height: 1.5; }
+    .result-title strong { font-weight: 500; }
+    .result-img-wrap { width: 100%; border-radius: 14px; overflow: hidden; margin-bottom: 1.25rem; border: 1px solid var(--line); }
+    .result-img { width: 100%; height: 280px; object-fit: cover; display: block; }
+    .result-img-placeholder {
+      width: 100%; height: 280px; background: #f0f0ee;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: var(--muted);
+      border-radius: 14px; border: 1px solid var(--line); margin-bottom: 1.25rem;
+    }
+    .result-name { font-size: 22px; font-weight: 500; color: var(--accent); margin-bottom: 2rem; }
+    .share-btn {
+      width: 100%; padding: 14px; border-radius: 10px;
+      border: 1px solid var(--accent); background: var(--accent);
+      color: #fff; font-size: 14px; font-family: 'Noto Sans KR', sans-serif;
+      cursor: pointer; margin-bottom: 10px; transition: opacity 0.15s;
+    }
+    .share-btn:hover { opacity: 0.85; }
+    .restart-btn {
+      width: 100%; padding: 12px; border-radius: 10px;
+      border: 1px solid var(--line); background: none;
+      color: var(--muted); font-size: 13px; font-family: 'Noto Sans KR', sans-serif; cursor: pointer;
+    }
+    .restart-btn:hover { color: var(--accent); border-color: var(--accent-soft); }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- 인트로 -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro">
+      <div class="intro-label">Happy 200 days</div>
+      <h1><strong>설아</strong>는 고양이</h1>
+      <p>버튼을 눌러주세요</p>
+      <button class="btn-start" onclick="playRandomCat(); startGame()">냠냠이</button>
+    </div>
+  </div>
+
+  <!-- 토너먼트 -->
+  <div class="screen" id="screen-tournament">
+    <div class="tournament-screen">
+      <div class="round-label" id="round-label">16강</div>
+      <div class="match-label" id="match-label">1 / 8 경기</div>
+      <div class="versus">
+        <div class="chair-card" id="card-a" onclick="selectChair('a')">
+          <div id="img-a" class="chair-img-placeholder">🪑</div>
+          <div class="chair-info">
+            <span class="chair-name" id="name-a"></span>
+            <span class="chair-check" id="check-a">✓</span>
+          </div>
+        </div>
+        <div class="vs-divider">VS</div>
+        <div class="chair-card" id="card-b" onclick="selectChair('b')">
+          <div id="img-b" class="chair-img-placeholder">🪑</div>
+          <div class="chair-info">
+            <span class="chair-name" id="name-b"></span>
+            <span class="chair-check" id="check-b">✓</span>
+          </div>
+        </div>
+      </div>
+      <button class="btn-next-match" id="btn-next-match" onclick="nextMatch()" disabled>다음</button>
+    </div>
+  </div>
+
+  <!-- 결과 -->
+  <div class="screen" id="screen-result">
+    <div class="result-screen">
+      <div class="result-eyebrow">최종 결과</div>
+      <div class="result-title">설아의 최종 선택은?</div>
+      <div id="result-img-wrap"></div>
+      <div class="result-name" id="result-name">—</div>
+      <button class="share-btn" id="share-btn">언니에게 전달하기</button>
+      <button class="restart-btn" onclick="restart()">처음부터 다시</button>
+    </div>
+  </div>
+
+</div>
+<script>
+  // =============================================
+  // 소리 파일 — GitHub에 올린 wav 파일 이름이에요
+  // =============================================
+  const catSounds = [
+    new Audio('cat1.wav'),
+    new Audio('cat2.wav'),
+  ];
+  const fanfareSound = new Audio('fanfare.wav');
+
+  function playRandomCat() {
+    const s = catSounds[Math.floor(Math.random() * catSounds.length)];
+    s.currentTime = 0;
+    s.play().catch(() => {});
+  }
+
+  function playFanfare() {
+    fanfareSound.currentTime = 0;
+    fanfareSound.play().catch(() => {});
+  }
+
+  // =============================================
+  // 의자 목록
+  // =============================================
+  const ALL_CHAIRS = [
+    { id: 1,  name: "냠냠이",   img: "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/openapi/4541212/1702458212402.jpg?w=1280&h=1280&c=c" },
+    { id: 2,  name: "츄르",     img: "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/openapi/19731455/1723251316739.png?w=1280&h=1280&c=c" },
+    { id: 3,  name: "인간",     img: "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-217999525322880.png?w=1280&h=1280&c=c" },
+    { id: 4,  name: "도와",     img: "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/165545559683646609.jpg?w=1280&h=1280&c=c" },
+    { id: 5,  name: "장난감",   img: "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-296788361478272.jpg?w=1280&h=1280&c=c" },
+    { id: 6,  name: "모래",     img: "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/163711621968034795.jpg?w=1280&h=1280&c=c" },
+    { id: 7,  name: "병원",     img: "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-509863254700096.jpg?w=1280&h=1280&c=c" },
+    { id: 8,  name: "베란다",   img: "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/165677601918741266.jpg?w=1280&h=1280&c=c" },
+    { id: 9,  name: "호두",     img: "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/162493726025114564.jpg?w=1280&h=1280&c=c" },
+    { id: 10, name: "마루",     img: "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-497366885113920.jpg?w=1280&h=1280&c=c" },
+    { id: 11, name: "쓰다듬어", img: "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-327243936047168.jpg?w=1280&h=1280&c=c" },
+    { id: 12, name: "궁디팡팡", img: "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/163418599663291863.jpg?w=1280&h=1280&c=c" },
+    { id: 13, name: "빗질",     img: "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/openapi/10877396/1660722362858.jpg?w=1280&h=1280&c=c" },
+    { id: 14, name: "놀아",     img: "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-484842425737216.jpg?w=1280&h=1280&c=c" },
+    { id: 15, name: "왜",       img: "https://prs.ohousecdn.com/apne2/any/uploads/productions/v1-296798416818240.jpg?w=1280&h=1280&c=c" },
+    { id: 16, name: "뭐",       img: "https://image.ohousecdn.com/i/bucketplace-v2-development/uploads/productions/156680524666478872.jpg?w=1280&h=1280&c=c" },
+  ];
+
+  const ROUND_NAMES = { 16: '16강', 8: '8강', 4: '4강', 2: '결승' };
+
+  let currentRound = [];
+  let nextRound = [];
+  let matchIndex = 0;
+  let selectedSide = null;
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function startGame() {
+    currentRound = shuffle(ALL_CHAIRS);
+    nextRound = [];
+    matchIndex = 0;
+    selectedSide = null;
+    goTo('tournament');
+    renderMatch();
+  }
+
+  function renderMatch() {
+    const total = currentRound.length / 2;
+    document.getElementById('round-label').textContent = ROUND_NAMES[currentRound.length] || currentRound.length + '강';
+    document.getElementById('match-label').textContent = `${matchIndex + 1} / ${total} 경기`;
+
+    const a = currentRound[matchIndex * 2];
+    const b = currentRound[matchIndex * 2 + 1];
+
+    document.getElementById('name-a').textContent = a.name;
+    document.getElementById('name-b').textContent = b.name;
+    setImg('img-a', a.img, a.name);
+    setImg('img-b', b.img, b.name);
+
+    document.getElementById('card-a').classList.remove('selected');
+    document.getElementById('card-b').classList.remove('selected');
+    document.getElementById('check-a').style.color = 'transparent';
+    document.getElementById('check-b').style.color = 'transparent';
+    document.getElementById('btn-next-match').disabled = true;
+    selectedSide = null;
+  }
+
+  function setImg(elId, url, name) {
+    const parent = document.getElementById(elId).parentNode;
+    const el = document.getElementById(elId);
+    if (url) {
+      const img = document.createElement('img');
+      img.className = 'chair-img';
+      img.id = elId;
+      img.src = url;
+      img.alt = name;
+      parent.replaceChild(img, el);
+    } else {
+      if (el.tagName === 'IMG') {
+        const div = document.createElement('div');
+        div.className = 'chair-img-placeholder';
+        div.id = elId;
+        div.textContent = '🪑';
+        parent.replaceChild(div, el);
+      } else {
+        el.textContent = '🪑';
+      }
+    }
+  }
+
+  function selectChair(side) {
+    playRandomCat();
+    selectedSide = side;
+    document.getElementById('card-a').classList.toggle('selected', side === 'a');
+    document.getElementById('card-b').classList.toggle('selected', side === 'b');
+    document.getElementById('check-a').style.color = side === 'a' ? '#fff' : 'transparent';
+    document.getElementById('check-b').style.color = side === 'b' ? '#fff' : 'transparent';
+    document.getElementById('btn-next-match').disabled = false;
+  }
+
+  function nextMatch() {
+    if (!selectedSide) return;
+    const winner = currentRound[matchIndex * 2 + (selectedSide === 'a' ? 0 : 1)];
+    nextRound.push(winner);
+    matchIndex++;
+
+    if (matchIndex >= currentRound.length / 2) {
+      if (nextRound.length === 1) {
+        showResult(nextRound[0]);
+      } else {
+        currentRound = nextRound;
+        nextRound = [];
+        matchIndex = 0;
+        renderMatch();
+      }
+    } else {
+      renderMatch();
+    }
+  }
+
+  function showResult(winner) {
+    goTo('result');
+    playFanfare();
+    document.getElementById('result-name').textContent = winner.name;
+
+    const wrap = document.getElementById('result-img-wrap');
+    if (winner.img) {
+      wrap.innerHTML = `<div class="result-img-wrap"><img class="result-img" src="${winner.img}" alt="${winner.name}" /></div>`;
+    } else {
+      wrap.innerHTML = `<div class="result-img-placeholder">🪑</div>`;
+    }
+
+    document.getElementById('share-btn').onclick = () => {
+      const text = `설아의 최종 선택 🪑 : ${winner.name}`;
+      if (navigator.share) {
+        navigator.share({ text });
+      } else {
+        navigator.clipboard.writeText(text).then(() => alert('클립보드에 복사됐어!'));
+      }
+    };
+  }
+
+  function goTo(screenName) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + screenName).classList.add('active');
+  }
+
+  function restart() {
+    goTo('intro');
+  }
+</script>
+</body>
+</html>

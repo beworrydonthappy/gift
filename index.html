@@ -265,7 +265,6 @@
       <div id="result-img-wrap"></div>
       <div class="result-name" id="result-name">—</div>
       <button class="share-btn" id="share-btn">언니에게 전달하기</button>
-      <button class="restart-btn" onclick="restart()">처음부터 다시</button>
       <button class="restart-btn" style="margin-top:8px; color:var(--muted);" onclick="goToSecret()">???</button>
     </div>
   </div>
@@ -462,7 +461,6 @@
     bgm2.play().catch(() => {});
     currentPhoto = 1;
     document.getElementById('secret-img').src = '1.jpg';
-    document.getElementById('photo-index').textContent = '1';
     goTo('secret');
   }
 
